@@ -7,6 +7,7 @@
 package mongodbstore
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"time"
@@ -55,7 +56,7 @@ func NewMongoDBStore(c *mongo.Collection, maxAge int, ensureTTL bool, keyPairs .
 	store.MaxAge(maxAge)
 
 	if ensureTTL {
-		_, _ = c.Indexes().CreateOne(nil, mongo.IndexModel{
+		_, _ = c.Indexes().CreateOne(context.Background(), mongo.IndexModel{
 			Keys: bsonx.Doc{{Key: "modified", Value: bsonx.Int32(1)}}, // value is the type 1 (asc) or -1 (desc)
 			Options: &options.IndexOptions{
 				Background:         newBool(true),
@@ -148,7 +149,7 @@ func (m *MongoDBStore) load(session *sessions.Session) error {
 	}
 
 	s := Session{}
-	if err := m.collection.FindOne(nil, bson.D{{"_id", sessionID}}).Decode(&s); err != nil {
+	if err := m.collection.FindOne(context.Background(), bson.D{{"_id", sessionID}}).Decode(&s); err != nil {
 		return err
 	}
 
@@ -186,7 +187,7 @@ func (m *MongoDBStore) upsert(session *sessions.Session) error {
 		Modified: modified,
 	}
 
-	_, err = m.collection.ReplaceOne(nil, bson.D{{"_id", s.ID}}, &s, &options.ReplaceOptions{Upsert: newBool(true)})
+	_, err = m.collection.ReplaceOne(context.Background(), bson.D{{"_id", s.ID}}, &s, &options.ReplaceOptions{Upsert: newBool(true)})
 	if err != nil {
 		return err
 	}
@@ -200,7 +201,7 @@ func (m *MongoDBStore) delete(session *sessions.Session) error {
 		return ErrInvalidId
 	}
 
-	_, err = m.collection.DeleteOne(nil, bson.D{{"_id", sessionID}})
+	_, err = m.collection.DeleteOne(context.Background(), bson.D{{"_id", sessionID}})
 	return err
 }
 
