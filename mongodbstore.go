@@ -21,8 +21,9 @@ import (
 	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
+// Error definitions
 var (
-	ErrInvalidId = errors.New("mongodbstore: invalid session id")
+	ErrInvalidID = errors.New("mongodbstore: invalid session id")
 )
 
 // Session object store in MongoDB
@@ -36,7 +37,7 @@ type Session struct {
 type MongoDBStore struct {
 	Codecs     []securecookie.Codec
 	Options    *sessions.Options
-	Token      TokenGetSeter
+	Token      TokenGetSetter
 	collection *mongo.Collection
 }
 
@@ -145,11 +146,12 @@ func (m *MongoDBStore) MaxAge(age int) {
 func (m *MongoDBStore) load(session *sessions.Session) error {
 	sessionID, err := primitive.ObjectIDFromHex(session.ID)
 	if err != nil {
-		return ErrInvalidId
+		return ErrInvalidID
 	}
 
 	s := Session{}
-	if err := m.collection.FindOne(context.Background(), bson.D{{"_id", sessionID}}).Decode(&s); err != nil {
+	err = m.collection.FindOne(context.Background(), bson.D{{Key: "_id", Value: sessionID}}).Decode(&s)
+	if err != nil {
 		return err
 	}
 
@@ -163,7 +165,7 @@ func (m *MongoDBStore) load(session *sessions.Session) error {
 func (m *MongoDBStore) upsert(session *sessions.Session) error {
 	sessionID, err := primitive.ObjectIDFromHex(session.ID)
 	if err != nil {
-		return ErrInvalidId
+		return ErrInvalidID
 	}
 
 	var modified time.Time
@@ -187,7 +189,8 @@ func (m *MongoDBStore) upsert(session *sessions.Session) error {
 		Modified: modified,
 	}
 
-	_, err = m.collection.ReplaceOne(context.Background(), bson.D{{"_id", s.ID}}, &s, &options.ReplaceOptions{Upsert: newBool(true)})
+	_, err = m.collection.ReplaceOne(context.Background(), bson.D{{Key: "_id", Value: s.ID}}, &s,
+		&options.ReplaceOptions{Upsert: newBool(true)})
 	if err != nil {
 		return err
 	}
@@ -198,10 +201,10 @@ func (m *MongoDBStore) upsert(session *sessions.Session) error {
 func (m *MongoDBStore) delete(session *sessions.Session) error {
 	sessionID, err := primitive.ObjectIDFromHex(session.ID)
 	if err != nil {
-		return ErrInvalidId
+		return ErrInvalidID
 	}
 
-	_, err = m.collection.DeleteOne(context.Background(), bson.D{{"_id", sessionID}})
+	_, err = m.collection.DeleteOne(context.Background(), bson.D{{Key: "_id", Value: sessionID}})
 	return err
 }
 
