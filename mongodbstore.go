@@ -1,8 +1,10 @@
-// Copyright 2012 The KidStuff Authors. All rights reserved.
+// Copyright (c) 2012 The KidStuff Authors.
+// Copyright (c) 2019 Andrey Shulepov.
+// All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package mongostore
+package mongodbstore
 
 import (
 	"errors"
@@ -13,15 +15,18 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	ErrInvalidId = errors.New("mgostore: invalid session id")
+	ErrInvalidId = errors.New("mongodbstore: invalid session id")
 )
 
 // Session object store in MongoDB
 type Session struct {
-	Id       bson.ObjectId `bson:"_id,omitempty"`
+	Id       primitive.ObjectID `bson:"_id,omitempty"`
 	Data     string
 	Modified time.Time
 }
