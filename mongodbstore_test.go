@@ -37,7 +37,7 @@ func TestMongoStore(t *testing.T) {
 	// license that can be found in the LICENSE file.
 
 	// Round 1 ----------------------------------------------------------------
-	client, err := mongo.Connect(nil, options.Client().ApplyURI("localhost"))
+	client, err := mongo.Connect(nil, options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		panic(err)
 	}

@@ -3,7 +3,7 @@ mongodbstore
 
 [Gorilla's Session](http://www.gorillatoolkit.org/pkg/sessions) store implementation with MongoDB
 
-Forked from [mongostore](https://github.com/kidstuff/mongostore) to migrate mgo to mongo-go-driver.
+Forked from [github.com/kidstuff/mongostore](https://github.com/kidstuff/mongostore) to migrate from [mgo](https://labix.org/v2/mgo) to [mongo-go-driver](https://github.com/mongodb/mongo-go-driver).
 
 ## Requirements
 
@@ -21,7 +21,7 @@ Available on [godoc.org](http://www.godoc.org/github.com/ashulepov/mongodbstore)
 ```go
     func foo(rw http.ResponseWriter, req *http.Request) {
         // Fetch new store.
-        client, err := mongo.Connect(nil, options.Client().ApplyURI("localhost"))
+        client, err := mongo.Connect(nil, options.Client().ApplyURI("mongodb://localhost:27017"))
         if err != nil {
         	panic(err)
         }
