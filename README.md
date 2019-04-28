@@ -20,12 +20,15 @@ Available on [godoc.org](http://www.godoc.org/github.com/ashulepov/mongodbstore)
 ### Example
 ```go
     func foo(rw http.ResponseWriter, req *http.Request) {
+    	// Context
+    	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+    	
         // Fetch new store.
-        client, err := mongo.Connect(nil, options.Client().ApplyURI("mongodb://localhost:27017"))
+        client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
         if err != nil {
         	panic(err)
         }
-        defer client.Disconnect(nil)
+        defer client.Disconnect(ctx)
 
         store := mongodbstore.NewMongoDBStore(client.Database("test").Collection("test_session"), 3600, true,
             []byte("secret-key"))
