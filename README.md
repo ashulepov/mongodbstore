@@ -3,7 +3,7 @@ mongodbstore
 
 [Gorilla's Session](http://www.gorillatoolkit.org/pkg/sessions) store implementation with MongoDB
 
-Inspired by [mongostore](https://github.com/kidstuff/mongostore) implementation.
+Forked from [mongostore](https://github.com/kidstuff/mongostore) to migrate mgo to mongo-go-driver.
 
 ## Requirements
 
